@@ -76,10 +76,10 @@ void loop() {
   DateTime now = rtc.now();
 
   if(now.hour()<6 || now.hour()>21){
-    matrix.setBrightness(8);
+    matrix.setBrightness(0);
   }
   else{
-    matrix.setBrightness(0);
+    matrix.setBrightness(8);
   }
 
   if((latch == 0 && now.hour()%3 == 0) || digitalRead(bttnPin) == 0){
