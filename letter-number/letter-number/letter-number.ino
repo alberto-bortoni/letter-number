@@ -55,12 +55,12 @@ void setup() {
   matrix.setTextColor(LED_ON);
   matrix.setRotation(1);
   matrix.clear();
-
+  matrix.setBrightness(8);
+      
   rtc.begin();
   rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
   // January 21, 2014 at 3am you would call:
   // rtc.adjust(DateTime(2014, 1, 21, 3, 0, 0));
-
 
   pinMode(ledPin, OUTPUT);
   pinMode(bttnPin, INPUT_PULLUP);
@@ -75,12 +75,11 @@ void loop() {
 
   DateTime now = rtc.now();
 
-  if(now.hour()<6 || now.hour()>21){
-    matrix.setBrightness(0);
+  while(now.hour()<7 || now.hour()>21){
+    disp(' ', ' ');
+    delay(3500);
   }
-  else{
-    matrix.setBrightness(8);
-  }
+
 
   if((latch == 0 && now.hour()%3 == 0) || digitalRead(bttnPin) == 0){
     latch = 1;
