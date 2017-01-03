@@ -55,7 +55,7 @@ void setup() {
   matrix.setTextColor(LED_ON);
   matrix.setRotation(1);
   matrix.clear();
-  matrix.setBrightness(8);
+  matrix.setBrightness(2);
       
   rtc.begin();
   rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
