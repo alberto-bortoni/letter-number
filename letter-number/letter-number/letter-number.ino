@@ -17,7 +17,7 @@
  *  their 2 digit form, eg. K2,L3,S1.
  *
  *  RTC is used to dim the brightness of the display at night and change
- *  letter displayed every 3 hours at random.
+ *  letter displayed every 3 seconds at random.
  *
 */
 /*---------------------------------------------------------------*/
@@ -42,7 +42,8 @@ const char abc[] =  "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const char numb[] = "12345678912345678912345678";
 int randomNumber = 0;
 int latch = 0;
-
+int nowtime = 0;
+int nowhour = 0;
 
 /***********************************************************/
 /*                  FUNCTION PROTOTYPES                    */
@@ -58,14 +59,15 @@ void setup() {
   matrix.setBrightness(2);
       
   rtc.begin();
-  rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
-  // January 21, 2014 at 3am you would call:
-  // rtc.adjust(DateTime(2014, 1, 21, 3, 0, 0));
 
   pinMode(ledPin, OUTPUT);
   pinMode(bttnPin, INPUT_PULLUP);
 
   randomSeed(analogRead(0));
+
+  randomNumber = random(26);
+  disp(abc[randomNumber], numb[randomNumber]);
+  delay(1000);
 }
 /*------------------------------------------------*/
 
@@ -74,23 +76,37 @@ void setup() {
 void loop() {
 
   DateTime now = rtc.now();
+  delay(3000);
 
-  while(now.hour()<7 || now.hour()>21){
-    disp(' ', ' ');
-    delay(3500);
-  }
+  nowhour = now.hour();
+  if(nowhour<6 || nowhour>21){
+    nowtime = 0;}   //night
+  else{
+    nowtime = 1;}   //day
 
-
-  if((latch == 0 && now.hour()%3 == 0) || digitalRead(bttnPin) == 0){
-    latch = 1;
+  switch (nowtime*(nowhour%3 + 1)){
+    case 0:     // night
+      disp(' ', ' ');
+      latch = 1;
+      break;
+    case 1:     //change
+      if(latch){
+        randomNumber = random(26);
+        disp(abc[randomNumber], numb[randomNumber]);
+        latch = 0;
+      }
+      break;
+    case 2:     //nothing
+      latch = 1;
+      break;
+    case 3:     //nothing
+      break;
+    }
+  
+  if(digitalRead(bttnPin) == 0){
     randomNumber = random(26);
     disp(abc[randomNumber], numb[randomNumber]);
-    Serial.println(randomNumber+1);
-    delay(3500);
-    }
-
-  if(now.hour()%3 == 1){
-    latch = 0;
+    delay(3000);
     }
 }
 /*------------------------------------------------*/
