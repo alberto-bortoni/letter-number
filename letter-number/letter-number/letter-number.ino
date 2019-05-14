@@ -47,6 +47,7 @@ const int ledPin  = 13;
 int latch         = 1;
 int nowtime       = 0;
 int lastMin       = 0;
+int dst           = 0;
 
 /***********************************************************/
 /*                  FUNCTION PROTOTYPES                    */
@@ -74,7 +75,16 @@ void setup() {
 void loop() {
   DateTime now = rtc.now();
 
-  if(now.hour()<6 || now.hour()>=23){
+  /* for daylight savings time */
+  if (now.dayOfTheWeek() == 0 && now.month() == 3 && now.day() >= 8 && now.day() <= 16 && now.hour() == 2 && now.minute() == 0 && now.second() == 0 && dst == 0){
+    dst = 1; 
+    }
+  if(now.dayOfTheWeek() == 0 && now.month() == 11 && now.day() >= 1 && now.day() <= 8 && now.hour() == 2 && now.minute() == 0 && now.second() == 0 && dst == 1){
+    dst = 0; 
+    } 
+
+
+  if((now.hour()+dst)<6 || (now.hour()+dst)>=23){
     nowtime = 0;  //night
   }
   else{
@@ -83,7 +93,7 @@ void loop() {
 
 
   if((nowtime==1 && latch==1)||(nowtime==0 && latch==0)){
-    disp(now.dayOfTheWeek(), now.day(), now.hour(), now.minute());
+    disp(now.dayOfTheWeek(), now.day(), (now.hour()+dst), now.minute());
   }
   else{
     matrix.clear();
