@@ -63,7 +63,7 @@ void setup() {
 
   rtc.begin();
   //following line sets the RTC to the date & time this sketch was compiled
-  //rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+  rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
 
   pinMode(ledPin, OUTPUT);
   pinMode(bttnPin, INPUT_PULLUP);
@@ -78,11 +78,11 @@ void loop() {
   /* for daylight savings time */
   if (now.dayOfTheWeek() == 0 && now.month() == 3 && now.day() >= 8 && now.day() <= 16 && now.hour() == 2 && now.minute() == 0 && now.second() == 0 && dst == 0){
     dst = 1;
-    rtc.adjust(DateTime(now.year(), now.month(), now.day(), (now.hour()-1), now.minute(), now.second()));
+    rtc.adjust(DateTime(now.year(), now.month(), now.day(), (now.hour()+1), now.minute(), now.second()));
     }
   if(now.dayOfTheWeek() == 0 && now.month() == 11 && now.day() >= 1 && now.day() <= 8 && now.hour() == 2 && now.minute() == 0 && now.second() == 0 && dst == 1){
     dst = 0;
-    rtc.adjust(DateTime(now.year(), now.month(), now.day(), (now.hour()+1), now.minute(), now.second()));
+    rtc.adjust(DateTime(now.year(), now.month(), now.day(), (now.hour()-1), now.minute(), now.second()));
     } 
 
 
@@ -95,7 +95,8 @@ void loop() {
 
 
   if((nowtime==1 && latch==1)||(nowtime==0 && latch==0)){
-    disp(now.dayOfTheWeek(), now.day(), (now.hour()), now.minute());
+    disp(now.dayOfTheWeek(), now.day(), now.hour(), now.minute());
+    delay(400);
   }
   else{
     matrix.clear();
@@ -161,7 +162,6 @@ void disp(int tweek, int tday, int thour, int tminute){
 
 
     matrix.writeDisplay();
-    delay(400);
   }
 }
 /*------------------------------------------------*/
